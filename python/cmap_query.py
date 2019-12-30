@@ -24,24 +24,24 @@ import rest_utils
 N_CHUNK=100
 
 #############################################################################
-def ListDatatypes(base_url, params, verbose):
+def ListDatatypes(base_url, params):
   headers={"Accept": "application/json", "user_key": params['user_key']}
   url=(base_url+'/dataTypes')
-  response = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+  response = rest_utils.GetURL(url, headers=headers, parse_json=True)
   logging.debug(json.dumps(response, indent=2))
 
 #############################################################################
-def ListDatasets(base_url, params, verbose):
+def ListDatasets(base_url, params):
   headers={"Accept": "application/json", "user_key": params['user_key']}
   url=(base_url+'/datasets')
-  response = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+  response = rest_utils.GetURL(url, headers=headers, parse_json=True)
   logging.debug(json.dumps(response, indent=2))
 
 #############################################################################
-def ListPerturbagenClasses(base_url, params, fout, verbose):
+def ListPerturbagenClasses(base_url, params, fout):
   headers={"user_key": params['user_key']}
   url=(base_url+'/pcls')
-  pcls = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+  pcls = rest_utils.GetURL(url, headers=headers, parse_json=True)
   tags=None; n_pcl=0;
   for pcl in pcls:
     n_pcl+=1
@@ -58,7 +58,7 @@ def ListPerturbagenClasses(base_url, params, fout, verbose):
   logging.info('pcls: %d'%n_pcl)
 
 #############################################################################
-def GetGenes(base_url, params, ids, id_type, fout, verbose):
+def GetGenes(base_url, params, ids, id_type, fout):
   url_base=(base_url+'/genes?user_key='+params['user_key'])
   tags = None
   n_gene=0;
@@ -71,7 +71,7 @@ def GetGenes(base_url, params, ids, id_type, fout, verbose):
 	id_type, urllib.parse.quote(id_this), i_chunk*N_CHUNK, N_CHUNK))
       url=url_base+('&filter=%s'%(qry))
       try:
-        genes = rest_utils.GetURL(url, parse_json=True, verbose=verbose)
+        genes = rest_utils.GetURL(url, parse_json=True)
       except:
         break
       if not genes:
@@ -96,12 +96,12 @@ def GetGenes(base_url, params, ids, id_type, fout, verbose):
   logging.info('genes: %d'%n_gene)
 
 #############################################################################
-def GetGenes_Landmark(base_url, params, fout, verbose):
-  GetGenes(base_url, params, ['landmark'], 'l1000_type', fout, verbose)
+def GetGenes_Landmark(base_url, params, fout):
+  GetGenes(base_url, params, ['landmark'], 'l1000_type', fout)
 
 #############################################################################
-def GetGenes_All(base_url, params, fout, verbose):
-  GetGenes(base_url, params, ['landmark', 'inferred', 'best inferred', 'not inferred'], 'l1000_type', fout, verbose)
+def GetGenes_All(base_url, params, fout):
+  GetGenes(base_url, params, ['landmark', 'inferred', 'best inferred', 'not inferred'], 'l1000_type', fout)
 
 #############################################################################
 ### pert_type:
@@ -110,7 +110,7 @@ def GetGenes_All(base_url, params, fout, verbose):
 ###	trt_lig - Peptides and other biological agents (e.g. cytokine)
 ###	trt_sh.cgs - Consensus signature from shRNAs targeting the same gene
 #############################################################################
-def GetPerturbagens(base_url, params, ids, id_type, fout, verbose):
+def GetPerturbagens(base_url, params, ids, id_type, fout):
   headers={"Accept": "application/json", "user_key": params['user_key']}
   url_base=(base_url+'/perts')
   tags = None
@@ -127,7 +127,7 @@ def GetPerturbagens(base_url, params, ids, id_type, fout, verbose):
 	i_chunk*N_CHUNK, N_CHUNK))
       url=url_base+('?filter=%s'%(qry))
       try:
-        perts = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+        perts = rest_utils.GetURL(url, headers=headers, parse_json=True)
       except:
         continue
       if not perts:
@@ -153,12 +153,12 @@ def GetPerturbagens(base_url, params, ids, id_type, fout, verbose):
   logging.info('perturbagens: %d'%n_pert)
 
 #############################################################################
-def GetPerturbagens_All(base_url, params, fout, verbose):
+def GetPerturbagens_All(base_url, params, fout):
   pert_types=['trt_cp', 'trt_lig', 'trt_sh', 'trt_sh.cgs', 'trt_oe', 'trt_oe.mut', 'trt_xpr', 'trt_sh.css', 'ctl_vehicle.cns', 'ctl_vehicle', 'ctl_vector', 'ctl_vector.cns', 'ctl_untrt.cns', 'ctl_untrt']
-  GetPerturbagens(base_url, params, pert_types, 'pert_type', fout, verbose)
+  GetPerturbagens(base_url, params, pert_types, 'pert_type', fout)
 
 #############################################################################
-def GetDrugs_All(base_url, params, fout, verbose):
+def GetDrugs_All(base_url, params, fout):
   headers={"Accept": "application/json", "user_key": params['user_key']}
   url_base=(base_url+'/rep_drugs')
   tags = None
@@ -167,7 +167,7 @@ def GetDrugs_All(base_url, params, fout, verbose):
     qry=('{"skip":%d,"limit":%d}'%(i_chunk*N_CHUNK, N_CHUNK))
     url=url_base+('?filter=%s'%(qry))
     try:
-      drugs = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+      drugs = rest_utils.GetURL(url, headers=headers, parse_json=True)
     except Exception as e:
       logging.error('Exception: %s'%e)
       continue
@@ -191,7 +191,7 @@ def GetDrugs_All(base_url, params, fout, verbose):
   logging.info('drugs: %d'%n_drug)
 
 #############################################################################
-def GetCells(base_url, params, ids, id_type, fout, verbose):
+def GetCells(base_url, params, ids, id_type, fout):
   headers={"Accept": "application/json", "user_key": params['user_key']}
   url_base=(base_url+'/cells')
   tags = None
@@ -206,7 +206,7 @@ def GetCells(base_url, params, ids, id_type, fout, verbose):
 	i_chunk*N_CHUNK, N_CHUNK))
       url=url_base+('?filter=%s'%(qry))
       try:
-        cells = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+        cells = rest_utils.GetURL(url, headers=headers, parse_json=True)
       except:
         break
       if not cells:
@@ -233,7 +233,7 @@ def GetCells(base_url, params, ids, id_type, fout, verbose):
 
 #############################################################################
 # 2570 (3/28/2019)
-def GetCells_All(base_url, params, fout, verbose):
+def GetCells_All(base_url, params, fout):
   headers={"Accept": "application/json", "user_key": params['user_key']}
   url_base=(base_url+'/cells')
   tags = None
@@ -242,7 +242,7 @@ def GetCells_All(base_url, params, fout, verbose):
     qry=('{"skip":%d,"limit":%d}'%(i_chunk*N_CHUNK, N_CHUNK))
     url=url_base+('?filter=%s'%(qry))
     try:
-      cells = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=verbose)
+      cells = rest_utils.GetURL(url, headers=headers, parse_json=True)
     except Exception as e:
       logging.error('Exception: %s'%e)
       continue
@@ -277,7 +277,7 @@ def GetSignatures(base_url, params, args, fout):
 	args.skip+i_chunk*N_CHUNK, N_CHUNK))
     url=url_base+('?filter=%s'%(qry))
     try:
-      sigs = rest_utils.GetURL(url, headers=headers, parse_json=True, verbose=args.verbose)
+      sigs = rest_utils.GetURL(url, headers=headers, parse_json=True)
     except:
       continue
     if not sigs:
@@ -310,7 +310,7 @@ def GetThings(base_url, params, service, args, fout):
 	args.clue_where, args.skip+i_chunk*N_CHUNK, N_CHUNK))
     url=url_base+('&filter=%s'%(qry))
     try:
-      things = rest_utils.GetURL(url, parse_json=True, verbose=args.verbose)
+      things = rest_utils.GetURL(url, parse_json=True)
     except:
       break
     if not things:
@@ -335,11 +335,15 @@ def GetThings(base_url, params, service, args, fout):
 
 #############################################################################
 if __name__=="__main__":
-  PROG=os.path.basename(sys.argv[0])
   API_HOST="api.clue.io"
   API_BASE_PATH="/api"
 
-  parser = argparse.ArgumentParser(description='CLUE.IO REST API client utility')
+  epilog='''\
+CMap is the project; Clue is the platform.
+https://clue.io/api. 
+Credentials config file should be at $HOME/.clueapi.yaml.
+'''
+  parser = argparse.ArgumentParser(description='CLUE.IO REST API client utility', epilog=epilog)
   ops = ['getGenes', 'getGenes_all', 'getGenes_landmark', 
 	'getPerturbagens', 'getPerturbagens_all',
 	'getDrugs_all',
@@ -387,37 +391,36 @@ if __name__=="__main__":
       line=fin.readline()
       if not line: break
       ids.append(line.rstrip())
-    if args.verbose:
-      logging.info('%s: input queries: %d'%(PROG,len(ids)))
+    logging.info('input queries: %d'%(len(ids)))
     fin.close()
   elif args.id:
     ids.append(args.id)
 
   if args.op=='getGenes':
     if not ids: parser.error('--id or --ifile required.')
-    GetGenes(base_url, params, ids, args.id_type, fout, args.verbose)
+    GetGenes(base_url, params, ids, args.id_type, fout)
 
   elif args.op=='getGenes_all':
-    GetGenes_All(base_url, params, fout, args.verbose)
+    GetGenes_All(base_url, params, fout)
 
   elif args.op=='getGenes_landmark':
-    GetGenes_Landmark(base_url, params, fout, args.verbose)
+    GetGenes_Landmark(base_url, params, fout)
 
   elif args.op=='getPerturbagens':
     if not ids: parser.error('--id or --ifile required.')
-    GetPerturbagens(base_url, params, ids, args.id_type, fout, args.verbose)
+    GetPerturbagens(base_url, params, ids, args.id_type, fout)
 
   elif args.op=='getPerturbagens_all':
-    GetPerturbagens_All(base_url, params, fout, args.verbose)
+    GetPerturbagens_All(base_url, params, fout)
 
   elif args.op=='getDrugs_all':
-    GetDrugs_All(base_url, params, fout, args.verbose)
+    GetDrugs_All(base_url, params, fout)
 
   elif args.op=='getCells':
     if not ids: parser.error('--id or --ifile required.')
-    GetCells(base_url, params, ids, args.id_type, fout, args.verbose)
+    GetCells(base_url, params, ids, args.id_type, fout)
   elif args.op=='getCells_all':
-    GetCells_All(base_url, params, fout, args.verbose)
+    GetCells_All(base_url, params, fout)
 
   elif args.op=='getSignatures':
     if not args.clue_where: parser.error('--clue_where required.')
@@ -428,13 +431,13 @@ if __name__=="__main__":
     GetThings(base_url, params, 'profiles', args, fout)
 
   elif args.op=='listDatasets':
-    ListDatasets(base_url, params, args.verbose)
+    ListDatasets(base_url, params)
 
   elif args.op=='listDatatypes':
-    ListDatatypes(base_url, params, args.verbose)
+    ListDatatypes(base_url, params)
 
   elif args.op=='listPerturbagenClasses':
-    ListPerturbagenClasses(base_url, params, fout, args.verbose)
+    ListPerturbagenClasses(base_url, params, fout)
 
   else:
     parser.print_help()
