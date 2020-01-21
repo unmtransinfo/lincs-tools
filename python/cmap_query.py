@@ -314,38 +314,6 @@ def GetSignatures(base_url, params, args, fout):
   logging.info('signatures: %d'%n_sig)
 
 #############################################################################
-def GetThings(base_url, params, service, args, fout):
-  url_base = (base_url+'/'+service+'?user_key='+params['user_key'])
-  tags=None; n_thing=0; i_chunk=0;
-  while True:
-    qry = ('{"where":%s,"skip":%d,"limit":%d}'%(
-	args.clue_where, args.skip+i_chunk*N_CHUNK, N_CHUNK))
-    url = url_base+('&filter=%s'%(qry))
-    try:
-      things = rest_utils.GetURL(url, parse_json=True)
-    except:
-      break
-    if not things:
-      break
-    for thing in things:
-      n_thing+=1
-      if not tags:
-        tags = thing.keys()
-        fout.write('\t'.join(tags)+'\n')
-      vals = []
-      for tag in tags:
-        if tag not in thing:
-          vals.append('')
-        elif type(thing[tag]) in (list, tuple):
-          vals.append(';'.join([str(x) for x in thing[tag]]))
-        else:
-          vals.append(str(thing[tag]))
-      fout.write('\t'.join(vals)+'\n')
-      if n_thing==args.nmax: break
-    i_chunk+=1
-  logging.info('%s: %d'%(service, n_thing))
-
-#############################################################################
 if __name__=="__main__":
   API_HOST = "api.clue.io"
   API_BASE_PATH = "/api"
@@ -358,7 +326,7 @@ Credentials config file should be at $HOME/.clueapi.yaml.
   parser = argparse.ArgumentParser(description='CLUE.IO REST API client utility', epilog=epilog)
   ops = ['getGenes', 'listGenes', 'listGenes_landmark', 
 	'getPerturbagens', 'listPerturbagens', 'listDrugs',
-	'countSignatures', 'getSignatures', 'getProfiles',
+	'countSignatures', 'getSignatures',
 	'getCells', 'listCells',
 	'listPerturbagenClasses',
 	'listDatasets', 'listDatatypes',
@@ -442,10 +410,6 @@ Credentials config file should be at $HOME/.clueapi.yaml.
   elif args.op=='countSignatures':
     if not args.clue_where: parser.error('--clue_where required.')
     CountSignatures(base_url, params, args)
-
-  elif args.op=='getProfiles':
-    if not args.clue_where: parser.error('--clue_where required.')
-    GetThings(base_url, params, 'profiles', args, fout)
 
   elif args.op=='listDatasets':
     ListDatasets(base_url, params)
