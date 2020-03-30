@@ -2,6 +2,8 @@
 
 Tools for use with Library of Integrated Network-based Cellular Signatures (LINCS).
 
+* See also: Python package [BioClients](https://github.com/jeremyjyang/BioClients), `lincs` module.
+
 ## LINCS Resources (<http://bd2k-lincs.org/resources>)
 
 * [LINCS Concierge](http://bd2k-lincs.org/getting-started/concierge)
